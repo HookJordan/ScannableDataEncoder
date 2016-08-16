@@ -107,27 +107,38 @@ namespace ScannableDataEncoding.Core
             //Create brushes to use for binary values 
             Brush[] brushSet = new Brush[] { new SolidBrush(OffColor), new SolidBrush(OnColor) };
 
+            //Create variables to count rows and collumns 
             int x = 0, y = 0, z = 0;
 
+            //while there is data left to draw 
             while(z < binary.Length)
             {
+                //get the value as a bit 
                 int value = int.Parse(binary.Substring(z, 1));
 
+                //draw the value based on current index 
                 g.FillRectangle(brushSet[value], new Rectangle(x * blockSize, y * blockSize, blockSize, blockSize));
 
+                //if we reached the column size 
                 if(x == rowSize)
                 {
+                    //reset column count 
                     x = 0;
+                    
+                    //increase row count 
                     y++; 
                 }
                 else
                 {
+                    //otherwise increase column 
                     x++;
                 }
 
+                //increase index of data 
                 z++;
             }
 
+            //return the drawn image 
             return source; 
         }
 
