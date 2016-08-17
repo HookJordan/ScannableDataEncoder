@@ -3,4 +3,6 @@ The ScannableDataEncoding is a POE (Proof of concept) tool used to create simple
 <br /> <br />
 The idea behind this project is to create an encoder that will created images based on encrypted data that can be store in real paper files and recovered back into the system when needed without having to manually type it out. E.G. you could save an encrypted source code in a set of paper files and load it back when needed. Burning paper is faster then formatting drives! <br />
 <br />
+
+See GIF for example:
 https://i.gyazo.com/7736f2baaf1431326f1d4ce72afaa44c.gif
