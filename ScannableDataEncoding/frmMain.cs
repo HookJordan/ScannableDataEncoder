@@ -38,7 +38,7 @@ namespace ScannableDataEncoding
             using (SaveFileDialog sfd = new SaveFileDialog())
             {
                 //bmps only at this time 
-                sfd.Filter = ".bmp"; 
+                sfd.Filter = "bitmap files (*.bmp)|*.bmp"; 
 
                 //if file path is selected 
                 if(sfd.ShowDialog() == DialogResult.OK)
@@ -55,10 +55,10 @@ namespace ScannableDataEncoding
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 //set the filter for bitmaps 
-                ofd.Filter = ".bmp"; 
+                ofd.Filter = "bitmap files (*.bmp)|*.bmp";
 
                 //if a file is selected 
-                if(ofd.ShowDialog() == DialogResult.OK)
+                if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     //load the image 
                     pbImage.Image = Image.FromFile(ofd.FileName);
