@@ -24,5 +24,10 @@ namespace ScannableDataEncoding
         {
             pbImage.Image = SDE.Encode(Encoding.ASCII.GetBytes(txtData.Text));
         }
+
+        private void imageToDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            txtData.Text = Encoding.ASCII.GetString(SDE.Decode((Bitmap)pbImage.Image));
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -51,6 +52,10 @@ namespace ScannableDataEncoding.Core
         /// </summary>
         public Color OffColor { get; private set; }
 
+        //Undocumented test variables 
+        public static int BlockSize { get; set; }
+        public static int RowSize { get; set; }
+
         /// <summary>
         /// Creates a new instance of the encoder / decoder 
         /// </summary>
@@ -86,17 +91,26 @@ namespace ScannableDataEncoding.Core
                 default:
                     throw new Exception("Invalid color choice for the off_color parameter. Please choose from the valid color list."); 
             }
+
+            //set some defaults
+            BlockSize = 2;
+            RowSize = 8 * 32; 
         }
 
+        /// <summary>
+        /// Encodes data into an image format that is printer friendly 
+        /// </summary>
+        /// <param name="data">The data to format</param>
+        /// <returns>Bitmap representation of the data</returns>
         public Bitmap Encode(byte[] data)
         {
             string binary = ByteArrayToString(data);
 
             //calculate the amount of rows of pixels we are going to use 
-            int blockSize = 2; //in pixels 
+            int blockSize = BlockSize; //in pixels 
 
             //Create some sizes to work with 
-            int rowSize = 8 * 32;
+            int rowSize = RowSize;
 
             //Create an image to draw to 
             Bitmap source = new Bitmap(binary.Length * blockSize, ((binary.Length / rowSize)  + 1) * blockSize);
@@ -142,6 +156,46 @@ namespace ScannableDataEncoding.Core
             return source; 
         }
 
+        public byte[] Decode(Bitmap source)
+        {
+            //create a new string to store the binary data in 
+            string binary = string.Empty;
+
+            //create a decoder set to map colors and bits 
+            Dictionary<int, int> decodeSet = new Dictionary<int, int>();
+
+            //setup the decoder set 
+            decodeSet.Add(this.OffColor.ToArgb(), 0);
+            decodeSet.Add(this.OnColor.ToArgb(), 1);
+
+            //Loop accross the height of the image 
+            for (int y = 0; y < source.Height; y += BlockSize)
+            {
+                //loop accross the collumns of the image 
+                for (int x = 0; x < source.Width; x += BlockSize)
+                {
+                    //get the current pixel 
+                    Color current = source.GetPixel(x, y); 
+
+                    //check if it's a valid color 
+                    if(decodeSet.ContainsKey(current.ToArgb()))
+                    {
+                        //if so append to the string 
+                        binary += decodeSet[current.ToArgb()].ToString();
+                    }
+                    else
+                    {
+                        //exit the for loop as we are no longer reading possible colours... we are probably at the end of the data 
+                        break;
+                    }
+
+                }
+            }
+
+            //return the decoded data 
+            return BinaryStringToByteArray(binary); 
+        }
+
         /// <summary>
         /// Convert the data to a binary string (easier to loop through)... will stop using strings if the concept works... 
         /// </summary>
@@ -149,7 +203,24 @@ namespace ScannableDataEncoding.Core
         /// <returns>The binary representation of the data</returns>
         public static string ByteArrayToString(byte[] raw)
         {
-            return string.Concat(raw.Select(b => Convert.ToString(b, 2)));
+            return string.Concat(raw.Select(b => Convert.ToString(b, 2).PadLeft(8, '0')));
+        }
+
+        /// <summary>
+        /// Loop through each bit and convert  it back to bytes
+        /// </summary>
+        /// <param name="input">the input bit stream</param>
+        /// <returns>byte array representation of the binary stream of bits</returns>
+        public static byte[] BinaryStringToByteArray(string input)
+        {
+            int numOfBytes = input.Length / 8; //8 bits to a byte 
+            byte[] bytes = new byte[numOfBytes];
+            for (int i = 0; i < numOfBytes; ++i)
+            {
+                //convert each byte 
+                bytes[i] = Convert.ToByte(input.Substring(8 * i, 8), 2);
+            }
+            return bytes; 
         }
     }
 }
