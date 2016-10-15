@@ -5,4 +5,4 @@ The idea behind this project is to create an encoder that will created images ba
 <br />
 
 See GIF for example:
-https://i.gyazo.com/7736f2baaf1431326f1d4ce72afaa44c.gif
+![gif](https://i.gyazo.com/7736f2baaf1431326f1d4ce72afaa44c.gif)
